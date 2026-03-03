@@ -1,0 +1,26 @@
+﻿
+  Migration name  Batch / Status  
+  0001_01_01_000000_create_users_table  [1] Ran  
+  0001_01_01_000001_create_cache_table  [1] Ran  
+  0001_01_01_000002_create_jobs_table  [1] Ran  
+  2026_01_27_141457_create_buses_table  [1] Ran  
+  2026_01_28_072549_add_stops_to_buses_table  [2] Ran  
+  2026_01_29_070512_add_availability_to_buses_table  [3] Ran  
+  2026_01_29_091455_create_bus_fares_table  [4] Ran  
+  2026_02_02_094914_create_bus_stop_timings_table  [5] Ran  
+  2026_02_05_070406_create_seats_table  [6] Ran  
+  2026_02_05_070407_create_bookings_table  [6] Ran  
+  2026_02_05_070408_create_booking_seats_table  [6] Ran  
+  2026_02_07_040922_create_seat_locks_table  [7] Ran  
+  2026_02_19_085753_add_status_to_buses_table  [8] Ran  
+  2026_02_21_183836_add_is_active_to_buses_table  [9] Ran  
+  2026_02_21_185141_create_announcements_table  [10] Ran  
+  2026_02_21_202949_add_time_columns_to_announcements_table  [11] Ran  
+  2026_02_22_092643_add_contact_to_buses_table  [12] Ran  
+  2026_02_22_182313_add_name_phone_to_bookings_table  Pending  
+  2026_02_25_191144_add_payment_and_route_fields_to_bookings_table  [14] Ran  
+  2026_02_25_214512_add_travel_date_to_seat_locks_table  Pending  
+  2026_03_02_125122_add_target_fields_to_announcements_table  [20] Ran  
+  2026_03_02_140728_add_close_bookings_to_announcements_table  [20] Ran  
+  2026_03_02_212918_add_location_tracking_to_buses_table  Pending  
+
