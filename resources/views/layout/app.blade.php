@@ -119,6 +119,13 @@
             <hr class="text-secondary mx-3 my-2">
         @endif
 
+        @if(auth()->user()->isOperator() && !auth()->user()->isAdmin())
+            <div class="px-3 py-2 text-white fw-bold small">OPERATOR PANEL</div>
+            <a href="/operator/buses"><i class="bi bi-bus-front"></i> My Buses</a>
+            <a href="/operator/bus/create"><i class="bi bi-plus-circle"></i> Add Bus</a>
+            <hr class="text-secondary mx-3 my-2">
+        @endif
+
         <a href="{{ route('profile') }}"><i class="bi bi-person-circle"></i> My Profile</a>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
@@ -180,8 +187,32 @@
         </div>
     @endforeach
 
-    {{-- Back Button --}}
-    @if(!request()->is('/'))
+    {{-- Back Button Logic --}}
+    @php
+        $showBack = false;
+        $backRoutes = [
+            'operator/bus/create',
+            'operator/bus/*/edit',
+            'operator/change-password',
+            'operator/bus/*/bookings',
+            'operator/bus/*/bookings/*',
+            'admin/operator/create',
+            'admin/bus/*/bookings',
+            'admin/bus/*/bookings/*',
+            'payment/*',
+            'bus/*/live-tracking',
+            'select-seat/*/*',
+            'profile'
+        ];
+        foreach($backRoutes as $route) {
+            if(request()->is($route)) {
+                $showBack = true;
+                break;
+            }
+        }
+    @endphp
+
+    @if($showBack)
         <button onclick="history.back()" class="btn btn-secondary btn-sm mb-3">
             ← Back
         </button>

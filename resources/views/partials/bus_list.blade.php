@@ -88,15 +88,14 @@
                                 Login to Book
                             </a>
                         @endauth
+                        <a href="/bus/{{ $bus->id }}/live-tracking" class="btn btn-outline-info w-100 shadow-xs mt-2">
+                            <i class="bi bi-geo-fill me-2"></i> Track Live Location
+                        </a>
                     @else
                         <button class="btn btn-secondary btn-lg w-100 mb-2" disabled>
                             <i class="bi bi-lock-fill me-2"></i> Booking Closed
                         </button>
                     @endif
-
-                    <a href="/bus/{{ $bus->id }}/live-tracking" class="btn btn-outline-info w-100 shadow-xs">
-                        <i class="bi bi-geo-fill me-2"></i> Track Live Location
-                    </a>
                 </div>
             </div>
         </div>

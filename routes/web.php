@@ -84,7 +84,7 @@ Route::post('/logout', function () {
 
 Route::middleware(['auth', 'operator'])->group(function () {
     Route::get('/operator/dashboard', function () {
-        return view('operator.dashboard');
+        return redirect('/operator/buses');
     });
 
     Route::get('/operator/buses', [BusController::class, 'operatorBuses']);

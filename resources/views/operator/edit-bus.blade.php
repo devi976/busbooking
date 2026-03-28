@@ -113,14 +113,15 @@
             $days = $bus->available_days ? explode(',', $bus->available_days) : [];
         @endphp
 
-        <label>Select Days (if Specific)</label>
-        <select name="available_days[]" class="form-control mb-3" multiple>
+        <label class="d-block mb-2">Select Days (if Specific)</label>
+        <div class="mb-3">
             @foreach(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $day)
-                <option value="{{ $day }}" {{ in_array($day, $days) ? 'selected' : '' }}>
-                    {{ $day }}
-                </option>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="available_days[]" value="{{ $day }}" id="edit_day_{{ $day }}" {{ in_array($day, $days) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="edit_day_{{ $day }}">{{ $day }}</label>
+                </div>
             @endforeach
-        </select>
+        </div>
 
         <hr>
 
@@ -168,5 +169,31 @@ function addTimingRow() {
         </div>
     `);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.querySelector('select[name="availability_type"]');
+    const checkboxes = document.querySelectorAll('input[name="available_days[]"]');
+
+    function updateCheckboxes() {
+        if (typeSelect.value === 'single') {
+            let checkedCount = 0;
+            checkboxes.forEach(cb => { if(cb.checked) checkedCount++; });
+            
+            checkboxes.forEach(cb => {
+                if(checkedCount >= 1 && !cb.checked) {
+                    cb.disabled = true;
+                } else {
+                    cb.disabled = false;
+                }
+            });
+        } else {
+            checkboxes.forEach(cb => cb.disabled = false);
+        }
+    }
+
+    typeSelect.addEventListener('change', updateCheckboxes);
+    checkboxes.forEach(cb => cb.addEventListener('change', updateCheckboxes));
+    updateCheckboxes();
+});
 </script>
 @endsection

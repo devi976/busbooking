@@ -13,6 +13,8 @@ class Bus extends Model
         'is_active',
         'from',
         'to',
+        'travel_date',
+        'stops',
         'availability_type',
         'available_days',
         'total_seats',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bus;
 use App\Models\BusFare;
 use App\Models\BusStopTiming;
+use App\Models\Seat;
 use Illuminate\Http\Request;
 
 class BusController extends Controller
@@ -159,6 +160,8 @@ class BusController extends Controller
 
     public function liveTracking(Bus $bus)
     {
+        // Load stop timings so the view can access the schedule
+        $bus->load('stopTimings');
         return view('bus.tracking', compact('bus'));
     }
 
@@ -217,19 +220,29 @@ class BusController extends Controller
             'from'         => 'required',
             'to'           => 'required',
             'total_seats'  => 'required|integer|min:1',
-            'fare'         => 'required|numeric|min:0',
-            'contact_number'=>$request->contact_number,
+            'fare'         => 'required|array',
+            'fare.*'       => 'required|numeric|min:0',
+            'contact_number'=>'nullable|string',
         ]);
+
+        $maxFare = 0;
+        if (!empty($request->fare) && is_array($request->fare)) {
+            $validFares = array_filter($request->fare, 'is_numeric');
+            if (count($validFares) > 0) {
+                $maxFare = max($validFares);
+            }
+        }
 
         // ✅ Create Bus
         $bus = Bus::create([
             'bus_name'       => $request->bus_name,
             'from'           => $request->from,
             'to'             => $request->to,
+            'travel_date'    => now()->toDateString(),
             'stops'          => $request->stops,
             'total_seats'    => $request->total_seats,
             'available_seats'=> $request->total_seats,
-            'fare'           => $request->fare,
+            'fare'           => $maxFare,
             'availability_type' => $request->availability_type,
             'available_days' => is_array($request->available_days)
                 ? implode(',', $request->available_days)
@@ -244,6 +257,20 @@ class BusController extends Controller
         'seat_type' => 'middle'
     ]);
 }
+        // ✅ Save Fares
+        if ($request->fare) {
+            foreach ($request->fare as $i => $fare) {
+                if ($fare) {
+                    BusFare::create([
+                        'bus_id'   => $bus->id,
+                        'from_stop'=> $request->from_stop[$i],
+                        'to_stop'  => $request->to_stop[$i],
+                        'fare'     => $fare,
+                    ]);
+                }
+            }
+        }
+
         // ✅ Save Stop Timings
         if ($request->stop_name && $request->arrival_time) {
             foreach ($request->stop_name as $i => $stop) {
@@ -288,12 +315,21 @@ class BusController extends Controller
             abort(403);
         }
 
+        $maxFare = $bus->fare;
+        if (!empty($request->fare) && is_array($request->fare)) {
+            $validFares = array_filter($request->fare, 'is_numeric');
+            if (count($validFares) > 0) {
+                $maxFare = max($validFares);
+            }
+        }
+
         // Update main details
         $bus->update([
             'bus_name'       => $request->bus_name,
             'from'           => $request->from,
             'to'             => $request->to,
             'stops'          => $request->stops,
+            'fare'           => $maxFare,
             'total_seats'    => $request->total_seats,
             'available_seats'=> $request->total_seats,
             'availability_type' => $request->availability_type,
