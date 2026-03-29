@@ -71,14 +71,14 @@ class BusController extends Controller
             $buses = $buses->filter(function ($bus) use ($from, $formattedTime) {
                 foreach ($bus->stopTimings as $timing) {
                     if (strtolower($timing->stop_name) === $from) {
-                        return date('H:i', strtotime($timing->arrival_time)) >= $formattedTime;
+                        return date('H:i', strtotime($timing->arrival_time)) === $formattedTime;
                     }
                 }
                 
                 if (strtolower($bus->from) === $from) {
                     $firstTiming = $bus->stopTimings->first();
                     if ($firstTiming) {
-                        return date('H:i', strtotime($firstTiming->arrival_time)) >= $formattedTime;
+                        return date('H:i', strtotime($firstTiming->arrival_time)) === $formattedTime;
                     }
                 }
                 return false;
@@ -129,14 +129,14 @@ class BusController extends Controller
             $buses = $buses->filter(function ($bus) use ($from, $formattedTime) {
                 foreach ($bus->stopTimings as $timing) {
                     if (strtolower($timing->stop_name) === $from) {
-                        return date('H:i', strtotime($timing->arrival_time)) >= $formattedTime;
+                        return date('H:i', strtotime($timing->arrival_time)) === $formattedTime;
                     }
                 }
                 
                 if (strtolower($bus->from) === $from) {
                     $firstTiming = $bus->stopTimings->first();
                     if ($firstTiming) {
-                        return date('H:i', strtotime($firstTiming->arrival_time)) >= $formattedTime;
+                        return date('H:i', strtotime($firstTiming->arrival_time)) === $formattedTime;
                     }
                 }
                 return false;
