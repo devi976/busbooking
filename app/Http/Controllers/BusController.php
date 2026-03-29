@@ -51,9 +51,10 @@ class BusController extends Controller
         $buses = Bus::with(['fares', 'stopTimings'])
             ->where('is_active', true)
             ->where(function ($query) use ($from, $to) {
-                $query->whereRaw('LOWER(`from`) = ?', [$from])
-                      ->orWhereRaw('LOWER(`to`) = ?', [$to])
-                      ->orWhereRaw('LOWER(stops) LIKE ?', ["%$to%"]);
+                $query->whereRaw('LOWER(`from`) = ? AND LOWER(`to`) = ?', [$from, $to])
+                      ->orWhereRaw('LOWER(`from`) = ? AND LOWER(stops) LIKE ?', [$from, "%$to%"])
+                      ->orWhereRaw('LOWER(stops) LIKE ? AND LOWER(`to`) = ?', ["%$from%", $to])
+                      ->orWhereRaw('LOWER(stops) LIKE ?', ["%$from%$to%"]);
             })
             ->where(function ($query) use ($day) {
                 $query->where('availability_type', 'daily')
@@ -102,9 +103,10 @@ class BusController extends Controller
         $buses = Bus::with(['fares', 'stopTimings'])
             ->where('is_active', true)
             ->where(function ($query) use ($from, $to) {
-                $query->whereRaw('LOWER(`from`) = ?', [$from])
-                      ->orWhereRaw('LOWER(`to`) = ?', [$to])
-                      ->orWhereRaw('LOWER(stops) LIKE ?', ["%$to%"]);
+                $query->whereRaw('LOWER(`from`) = ? AND LOWER(`to`) = ?', [$from, $to])
+                      ->orWhereRaw('LOWER(`from`) = ? AND LOWER(stops) LIKE ?', [$from, "%$to%"])
+                      ->orWhereRaw('LOWER(stops) LIKE ? AND LOWER(`to`) = ?', ["%$from%", $to])
+                      ->orWhereRaw('LOWER(stops) LIKE ?', ["%$from%$to%"]);
             })
             ->where(function ($query) use ($day) {
                 $query->where('availability_type', 'daily')
