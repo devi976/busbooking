@@ -67,13 +67,18 @@ class BusController extends Controller
 
         // ⏱ Filter by time if provided
         if ($time) {
-            $buses = $buses->filter(function ($bus) use ($to, $time) {
+            $formattedTime = date('H:i', strtotime($time));
+            $buses = $buses->filter(function ($bus) use ($from, $formattedTime) {
                 foreach ($bus->stopTimings as $timing) {
-                    if (
-                        strtolower($timing->stop_name) === $to &&
-                        $timing->arrival_time >= $time
-                    ) {
-                        return true;
+                    if (strtolower($timing->stop_name) === $from) {
+                        return date('H:i', strtotime($timing->arrival_time)) >= $formattedTime;
+                    }
+                }
+                
+                if (strtolower($bus->from) === $from) {
+                    $firstTiming = $bus->stopTimings->first();
+                    if ($firstTiming) {
+                        return date('H:i', strtotime($firstTiming->arrival_time)) >= $formattedTime;
                     }
                 }
                 return false;
@@ -99,6 +104,7 @@ class BusController extends Controller
         $from = strtolower(trim($request->from));
         $to   = strtolower(trim($request->to));
         $day  = date('l', strtotime($request->date));
+        $time = $request->time ?? null;
         
         $buses = Bus::with(['fares', 'stopTimings'])
             ->where('is_active', true)
@@ -116,6 +122,26 @@ class BusController extends Controller
                       });
             })
             ->get();
+            
+        // ⏱ Filter by time if provided
+        if ($time) {
+            $formattedTime = date('H:i', strtotime($time));
+            $buses = $buses->filter(function ($bus) use ($from, $formattedTime) {
+                foreach ($bus->stopTimings as $timing) {
+                    if (strtolower($timing->stop_name) === $from) {
+                        return date('H:i', strtotime($timing->arrival_time)) >= $formattedTime;
+                    }
+                }
+                
+                if (strtolower($bus->from) === $from) {
+                    $firstTiming = $bus->stopTimings->first();
+                    if ($firstTiming) {
+                        return date('H:i', strtotime($firstTiming->arrival_time)) >= $formattedTime;
+                    }
+                }
+                return false;
+            });
+        }
         session([
             'selected_travel_date' => $request->date,
             'selected_from' => $request->from,
